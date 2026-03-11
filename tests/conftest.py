@@ -40,6 +40,39 @@ def mock_settings(tmp_path: Path) -> Settings:
 
 
 @pytest.fixture
+def mock_agent_settings(tmp_path: Path) -> Settings:
+    return Settings(
+        hf_token="hf_test_token",
+        model_name="test-org/test-model",
+        dataset_name="test-org/test-dataset",
+        lora_r=8,
+        lora_alpha=16,
+        lora_dropout=0.1,
+        learning_rate=1e-4,
+        num_epochs=1,
+        batch_size=2,
+        gradient_accumulation_steps=1,
+        max_seq_length=512,
+        use_4bit=True,
+        use_unsloth=False,
+        use_flash_attention=False,
+        use_rslora=False,
+        use_dora=False,
+        use_packing=False,
+        lr_scheduler_type="cosine",
+        target_modules="all-linear",
+        tf32=True,
+        warmup_ratio=0.03,
+        output_dir=tmp_path / "outputs",
+        agent_model_id="test-model",
+        agent_provider="test",
+        agent_api_key="test-key",
+        agent_max_steps=3,
+        gpu_vram_gb=24.0,
+    )
+
+
+@pytest.fixture
 def tmp_output_dir(tmp_path: Path) -> Path:
     output = tmp_path / "outputs"
     output.mkdir()

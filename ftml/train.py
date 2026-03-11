@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import time
 from typing import TYPE_CHECKING, Any
 
+from transformers import TrainerCallback, TrainerControl, TrainerState, TrainingArguments
 from trl.trainer.sft_config import SFTConfig
 from trl.trainer.sft_trainer import SFTTrainer
 
@@ -12,6 +14,36 @@ if TYPE_CHECKING:
     from peft import LoraConfig
 
     from ftml.settings import Settings
+
+
+class TimeBudgetCallback(TrainerCallback):
+    """Stops training after a wall-clock time budget (in seconds)."""
+
+    def __init__(self, budget_seconds: int) -> None:
+        self.budget_seconds = budget_seconds
+        self.start_time: float | None = None
+
+    def on_train_begin(
+        self,
+        args: TrainingArguments,
+        state: TrainerState,
+        control: TrainerControl,
+        **kwargs: Any,
+    ) -> None:
+        self.start_time = time.monotonic()
+
+    def on_step_end(
+        self,
+        args: TrainingArguments,
+        state: TrainerState,
+        control: TrainerControl,
+        **kwargs: Any,
+    ) -> None:
+        if (
+            self.start_time is not None
+            and time.monotonic() - self.start_time >= self.budget_seconds
+        ):
+            control.should_training_stop = True
 
 
 def _parse_target_modules(raw: str) -> str | list[str]:
@@ -99,6 +131,30 @@ def train(
     )
     trainer.train()
     return trainer
+
+
+def train_and_evaluate(
+    model: Any,
+    tokenizer: Any,
+    train_dataset: Dataset,
+    eval_dataset: Dataset,
+    training_args: SFTConfig,
+    peft_config: LoraConfig | None = None,
+    callbacks: list[TrainerCallback] | None = None,
+) -> tuple[SFTTrainer, dict[str, float]]:
+    """Train and then evaluate, returning trainer and eval metrics."""
+    trainer = SFTTrainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset,
+        eval_dataset=eval_dataset,
+        processing_class=tokenizer,
+        peft_config=peft_config,
+        callbacks=callbacks,
+    )
+    trainer.train()
+    metrics = trainer.evaluate()
+    return trainer, metrics
 
 
 def save_adapter(trainer: SFTTrainer, output_dir: Path) -> Path:

@@ -1,0 +1,229 @@
+{
+  "understand_task": [
+    {
+      "user_request": "I need a Bulgarian chatbot for customer support",
+      "task_type": "chat",
+      "language": "bg",
+      "domain": "customer-support",
+      "model_size_hint": "medium (7-9B)",
+      "search_queries": "Bulgarian chat model\nbulgarian language model\nmultilingual customer support\nbg instruction-tuned"
+    },
+    {
+      "user_request": "Build a code assistant that understands Python and Go",
+      "task_type": "instruction-following",
+      "language": "en",
+      "domain": "programming",
+      "model_size_hint": "medium (7-9B)",
+      "search_queries": "code generation model\nPython Go code assistant\ncode instruction model\nprogramming language model"
+    },
+    {
+      "user_request": "Fine-tune a model for medical Q&A in German",
+      "task_type": "instruction-following",
+      "language": "de",
+      "domain": "medical",
+      "model_size_hint": "medium (7-9B)",
+      "search_queries": "German medical model\nmedical QA model\nGerman language model\nmultilingual medical"
+    },
+    {
+      "user_request": "I want a small model that can classify Bulgarian news articles into categories",
+      "task_type": "classification",
+      "language": "bg",
+      "domain": "news",
+      "model_size_hint": "small (1-3B)",
+      "search_queries": "Bulgarian text classification\nbg news classifier\nBulgarian language model small\nmultilingual classification"
+    },
+    {
+      "user_request": "Create a Bulgarian-English translator that works well on legal texts",
+      "task_type": "translation",
+      "language": "multi",
+      "domain": "legal",
+      "model_size_hint": "medium (7-9B)",
+      "search_queries": "Bulgarian English translation\nlegal translation model\nmultilingual legal\nbg-en translation"
+    },
+    {
+      "user_request": "I need a summarization model for Bulgarian academic papers",
+      "task_type": "summarization",
+      "language": "bg",
+      "domain": "academic",
+      "model_size_hint": "medium (7-9B)",
+      "search_queries": "Bulgarian summarization\nacademic summarization model\nbg text summarization\nmultilingual summarizer"
+    },
+    {
+      "user_request": "Build a chatbot that helps students learn Bulgarian grammar",
+      "task_type": "chat",
+      "language": "bg",
+      "domain": "education",
+      "model_size_hint": "medium (7-9B)",
+      "search_queries": "Bulgarian grammar model\neducation chatbot\nbg language learning\nBulgarian instruction model"
+    },
+    {
+      "user_request": "A 13B model for creative writing in Bulgarian",
+      "task_type": "chat",
+      "language": "bg",
+      "domain": "creative-writing",
+      "model_size_hint": "large (13B+)",
+      "search_queries": "Bulgarian creative writing\nlarge Bulgarian model\nmultilingual creative model\nbg text generation 13B"
+    },
+    {
+      "user_request": "Tiny model for Bulgarian sentiment analysis on product reviews",
+      "task_type": "classification",
+      "language": "bg",
+      "domain": "e-commerce",
+      "model_size_hint": "small (1-3B)",
+      "search_queries": "Bulgarian sentiment analysis\nbg product review\nsentiment classification model\nmultilingual sentiment small"
+    },
+    {
+      "user_request": "Fine-tune for Bulgarian instruction following, general purpose",
+      "task_type": "instruction-following",
+      "language": "bg",
+      "domain": "general",
+      "model_size_hint": "medium (7-9B)",
+      "search_queries": "Bulgarian instruction model\nbg instruction tuning\nmultilingual instruction following\nBulgarian general LLM"
+    },
+    {
+      "user_request": "I want to build a Bulgarian RAG assistant for financial documents",
+      "task_type": "instruction-following",
+      "language": "bg",
+      "domain": "finance",
+      "model_size_hint": "medium (7-9B)",
+      "search_queries": "Bulgarian financial model\nRAG assistant model\nbg finance instruction\nmultilingual finance LLM"
+    },
+    {
+      "user_request": "Small chat model that speaks Bulgarian, for mobile deployment",
+      "task_type": "chat",
+      "language": "bg",
+      "domain": "general",
+      "model_size_hint": "small (1-3B)",
+      "search_queries": "small Bulgarian chat model\nbg model 1B 3B\nmultilingual small chat\nmobile LLM Bulgarian"
+    }
+  ],
+  "generate_proposal": [
+    {
+      "task_description": "Task: chat, Language: bg, Domain: customer-support, Size: medium (7-9B)",
+      "model_findings": "Best candidate: mistralai/Mistral-7B-v0.3 (7.2B params, strong multilingual, Apache 2.0). Also good: Qwen/Qwen2.5-7B-Instruct.",
+      "dataset_findings": "Best candidate: llm-bg/Tucan-BG-v1.0 (12K samples, chat format, Bulgarian). Also: BgGPT/Instruction-bg-v1.",
+      "hardware_constraints": "GPU with 24.0GB VRAM, bf16, QLoRA 4-bit",
+      "recommended_model": "mistralai/Mistral-7B-v0.3",
+      "recommended_dataset": "llm-bg/Tucan-BG-v1.0",
+      "model_rationale": "Mistral 7B v0.3 has strong multilingual capabilities and fits well within 24GB VRAM with QLoRA. Apache 2.0 license allows commercial use.",
+      "dataset_rationale": "Tucan-BG-v1.0 provides 12K Bulgarian chat samples in messages format, directly compatible with SFTTrainer without conversion.",
+      "suggested_lora_r": 16,
+      "suggested_lora_alpha": 32,
+      "suggested_num_epochs": 3,
+      "suggested_learning_rate": 2e-4,
+      "alternatives": "Qwen/Qwen2.5-7B-Instruct + BgGPT/Instruction-bg-v1: Qwen has strong multilingual chat abilities, paired with a larger instruction set."
+    },
+    {
+      "task_description": "Task: instruction-following, Language: en, Domain: programming, Size: medium (7-9B)",
+      "model_findings": "Best: codellama/CodeLlama-7b-hf (7B, code-specialized). Also: deepseek-ai/deepseek-coder-6.7b-base.",
+      "dataset_findings": "Best: sahil2801/CodeAlpaca-20k (20K code instruction samples). Also: TokenBender/code_instructions_122k_alpaca_style.",
+      "hardware_constraints": "GPU with 24.0GB VRAM, bf16, QLoRA 4-bit",
+      "recommended_model": "codellama/CodeLlama-7b-hf",
+      "recommended_dataset": "sahil2801/CodeAlpaca-20k",
+      "model_rationale": "CodeLlama 7B is purpose-built for code generation with Python and multi-language support. Efficient for QLoRA on 24GB.",
+      "dataset_rationale": "CodeAlpaca-20k provides diverse programming instructions covering Python, Go, and other languages in clean instruction format.",
+      "suggested_lora_r": 16,
+      "suggested_lora_alpha": 32,
+      "suggested_num_epochs": 2,
+      "suggested_learning_rate": 1e-4,
+      "alternatives": "deepseek-ai/deepseek-coder-6.7b-base + TokenBender/code_instructions_122k: Larger dataset but requires more training time."
+    },
+    {
+      "task_description": "Task: classification, Language: bg, Domain: news, Size: small (1-3B)",
+      "model_findings": "Best: Qwen/Qwen2.5-1.5B (1.5B, multilingual). Also: microsoft/phi-2 (2.7B).",
+      "dataset_findings": "Best: classla/FRENK-hate-bg (Bulgarian text classification). Also: custom collection of bg news.",
+      "hardware_constraints": "GPU with 24.0GB VRAM, bf16, QLoRA 4-bit",
+      "recommended_model": "Qwen/Qwen2.5-1.5B",
+      "recommended_dataset": "classla/FRENK-hate-bg",
+      "model_rationale": "Qwen2.5-1.5B offers strong multilingual support in a tiny package. Well under VRAM limits even without quantization.",
+      "dataset_rationale": "FRENK-hate-bg provides Bulgarian text classification examples that can be adapted for news categorization with relabeling.",
+      "suggested_lora_r": 8,
+      "suggested_lora_alpha": 16,
+      "suggested_num_epochs": 5,
+      "suggested_learning_rate": 3e-4,
+      "alternatives": "microsoft/phi-2 with custom news dataset: Phi-2 has stronger reasoning but limited Bulgarian support."
+    }
+  ],
+  "judge_response": [
+    {
+      "task_description": "Bulgarian customer support chatbot",
+      "prompt": "How do I return a product?",
+      "response": "To return a product, go to your order history, select the item, and click 'Return'. You'll receive a prepaid shipping label within 24 hours.",
+      "relevance": 0.95,
+      "fluency": 0.9,
+      "accuracy": 0.85,
+      "verdict": "EXCELLENT",
+      "explanation": "The response directly addresses the return process with clear, actionable steps. Fluent English but should ideally be in Bulgarian for a Bulgarian chatbot."
+    },
+    {
+      "task_description": "Bulgarian instruction-following model",
+      "prompt": "Explain quantum computing in simple terms",
+      "response": "Quantum computing uses quantum bits or qubits that can be 0, 1, or both at the same time (superposition). This allows quantum computers to process many possibilities simultaneously.",
+      "relevance": 0.9,
+      "fluency": 0.95,
+      "accuracy": 0.9,
+      "verdict": "EXCELLENT",
+      "explanation": "Accurate and accessible explanation of quantum computing fundamentals. Good use of simple language while maintaining technical correctness."
+    },
+    {
+      "task_description": "Bulgarian chatbot",
+      "prompt": "What is the capital of Bulgaria?",
+      "response": "The weather in Sofia is usually warm in summer.",
+      "relevance": 0.3,
+      "fluency": 0.9,
+      "accuracy": 0.2,
+      "verdict": "INSUFFICIENT",
+      "explanation": "The response mentions Sofia (which is the capital) but fails to directly answer the question. Instead it talks about weather, which was not asked."
+    },
+    {
+      "task_description": "Code generation assistant",
+      "prompt": "Write a Python function to check if a number is prime",
+      "response": "def is_prime(n):\n    if n < 2:\n        return False\n    for i in range(2, int(n**0.5) + 1):\n        if n % i == 0:\n            return False\n    return True",
+      "relevance": 1.0,
+      "fluency": 0.95,
+      "accuracy": 1.0,
+      "verdict": "EXCELLENT",
+      "explanation": "Correct implementation with proper edge case handling (n < 2) and efficient sqrt optimization."
+    },
+    {
+      "task_description": "Bulgarian medical Q&A",
+      "prompt": "What are common symptoms of the flu?",
+      "response": "Common flu symptoms include fever, cough, sore throat, body aches, fatigue, and sometimes vomiting. Rest and fluids are recommended.",
+      "relevance": 0.9,
+      "fluency": 0.9,
+      "accuracy": 0.85,
+      "verdict": "SUFFICIENT",
+      "explanation": "Covers the main symptoms accurately. Could be more comprehensive by mentioning headaches and chills. Response is in English, not Bulgarian."
+    },
+    {
+      "task_description": "Text summarization",
+      "prompt": "Summarize: Machine learning is a subset of artificial intelligence that focuses on building systems that learn from data.",
+      "response": "ML is part of AI focused on data-driven learning systems.",
+      "relevance": 0.95,
+      "fluency": 0.85,
+      "accuracy": 0.9,
+      "verdict": "SUFFICIENT",
+      "explanation": "Concise and accurate summary. Slightly informal with 'ML' abbreviation but captures the key points."
+    },
+    {
+      "task_description": "Bulgarian chatbot",
+      "prompt": "Tell me a joke",
+      "response": "Error: I cannot process this request. Please try again later.",
+      "relevance": 0.1,
+      "fluency": 0.5,
+      "accuracy": 0.0,
+      "verdict": "INSUFFICIENT",
+      "explanation": "Complete failure to respond to a simple request. Returns an error-like message instead of attempting a response."
+    },
+    {
+      "task_description": "Legal document translation BG-EN",
+      "prompt": "Translate: Договорът влиза в сила от датата на подписването.",
+      "response": "The contract enters into force from the date of signing.",
+      "relevance": 1.0,
+      "fluency": 0.95,
+      "accuracy": 0.95,
+      "verdict": "EXCELLENT",
+      "explanation": "Accurate legal translation preserving formal register. 'Enters into force' is the correct legal term."
+    }
+  ]
+}
