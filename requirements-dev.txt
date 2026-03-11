@@ -1,0 +1,5 @@
+basedpyright
+ruff
+pre-commit
+pytest
+pytest-mock

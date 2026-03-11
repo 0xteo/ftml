@@ -1,0 +1,21 @@
+{
+    "typeCheckingMode": "recommended",
+    "pythonVersion": "3.14",
+    "executionEnvironments": [{
+        "root": "."
+    }],
+    "reportUnknownParameterType": "information",
+    "reportUnknownVariableType": "information",
+    "reportUnknownMemberType": "none",
+    "strictDictionaryInference": false,
+    "reportAny": "none",
+    "reportExplicitAny": "none",
+    "reportUnusedCallResult": "none",
+    "reportUnknownArgumentType": "none",
+    "reportImplicitOverride": "information",
+    "reportUnannotatedClassAttribute": "none",
+    "reportMissingTypeArgument": "none",
+    "reportMissingTypeStubs": "none",
+    "reportCallInDefaultInitializer": "none",
+    "reportImportCycles": "information"
+}
