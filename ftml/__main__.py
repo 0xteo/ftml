@@ -7,29 +7,41 @@ from ftml.settings import Settings
 
 def train_command(args: argparse.Namespace) -> None:
     from ftml.data import format_for_sft, load_dataset_from_hf
-    from ftml.model import build_quantization_config, load_model_and_tokenizer
-    from ftml.train import build_lora_config, build_training_args, save_adapter, train
+    from ftml.model import load_model_and_tokenizer
+    from ftml.train import (
+        apply_lora_unsloth,
+        build_lora_config,
+        build_training_args,
+        save_adapter,
+        train,
+    )
 
     settings = Settings(
         **{k: v for k, v in vars(args).items() if v is not None and k != "command"},
     )
 
     print(f"Loading model: {settings.model_name}")
-    quant_config = build_quantization_config(settings.use_4bit)
     model, tokenizer = load_model_and_tokenizer(
         settings.model_name,
         settings.hf_token,
-        quant_config,
+        use_4bit=settings.use_4bit,
+        max_seq_length=settings.max_seq_length,
+        use_unsloth=settings.use_unsloth,
+        use_flash_attention=settings.use_flash_attention,
     )
 
     print(f"Loading dataset: {settings.dataset_name}")
     ds = load_dataset_from_hf(settings.dataset_name, settings.hf_token)
     train_ds = format_for_sft(ds["train"], tokenizer)
 
-    print("Starting fine-tuning...")
     lora_config = build_lora_config(settings)
+    if settings.use_unsloth:
+        print("Applying LoRA (unsloth)...")
+        model = apply_lora_unsloth(model, settings)
+
+    print("Starting fine-tuning...")
     training_args = build_training_args(settings)
-    trainer = train(model, tokenizer, train_ds, lora_config, training_args)
+    trainer = train(model, tokenizer, train_ds, training_args, peft_config=lora_config)
 
     adapter_path = save_adapter(trainer, settings.output_dir)
     print(f"Adapter saved to: {adapter_path}")

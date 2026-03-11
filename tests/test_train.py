@@ -1,30 +1,83 @@
-from pathlib import Path
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
-from peft import TaskType
+from peft import LoraConfig, TaskType
 
-from ftml.settings import Settings
-from ftml.train import build_lora_config, build_training_args, save_adapter
+from ftml.train import (
+    _parse_target_modules,
+    build_lora_config,
+    build_training_args,
+    save_adapter,
+)
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from ftml.settings import Settings
+
+
+class TestParseTargetModules:
+    def test_all_linear_passthrough(self) -> None:
+        assert _parse_target_modules("all-linear") == "all-linear"
+
+    def test_comma_separated(self) -> None:
+        result = _parse_target_modules("q_proj,v_proj,k_proj")
+        assert result == ["q_proj", "v_proj", "k_proj"]
+
+    def test_comma_separated_with_spaces(self) -> None:
+        result = _parse_target_modules("q_proj, v_proj, k_proj")
+        assert result == ["q_proj", "v_proj", "k_proj"]
+
+    def test_single_module(self) -> None:
+        result = _parse_target_modules("q_proj")
+        assert result == ["q_proj"]
 
 
 class TestBuildLoraConfig:
-    def test_lora_params(self, mock_settings: Settings) -> None:
+    def test_default_config(self, mock_settings: Settings) -> None:
         config = build_lora_config(mock_settings)
 
+        assert config is not None
+        assert isinstance(config, LoraConfig)
         assert config.r == 8
         assert config.lora_alpha == 16
         assert config.lora_dropout == 0.1
         assert config.task_type == TaskType.CAUSAL_LM
-        assert config.target_modules is not None
-        assert "q_proj" in config.target_modules
-        assert "v_proj" in config.target_modules
         assert config.bias == "none"
 
-    def test_target_modules_complete(self, mock_settings: Settings) -> None:
+    def test_all_linear_target_modules(self, mock_settings: Settings) -> None:
         config = build_lora_config(mock_settings)
-        expected = {"q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"}
-        assert config.target_modules is not None
-        assert set(config.target_modules) == expected
+
+        assert config is not None
+        assert config.target_modules == "all-linear"
+
+    def test_custom_target_modules(self, mock_settings: Settings) -> None:
+        mock_settings.target_modules = "q_proj,v_proj"  # type: ignore[misc]
+        config = build_lora_config(mock_settings)
+
+        assert config is not None
+        assert config.target_modules == {"q_proj", "v_proj"}
+
+    def test_rslora_enabled(self, mock_settings: Settings) -> None:
+        mock_settings.use_rslora = True  # type: ignore[misc]
+        config = build_lora_config(mock_settings)
+
+        assert config is not None
+        assert config.use_rslora is True
+
+    def test_dora_enabled(self, mock_settings: Settings) -> None:
+        mock_settings.use_dora = True  # type: ignore[misc]
+        config = build_lora_config(mock_settings)
+
+        assert config is not None
+        assert config.use_dora is True
+
+    def test_returns_none_for_unsloth(self, mock_settings: Settings) -> None:
+        mock_settings.use_unsloth = True  # type: ignore[misc]
+
+        assert build_lora_config(mock_settings) is None
 
 
 class TestBuildTrainingArgs:
@@ -41,6 +94,31 @@ class TestBuildTrainingArgs:
         assert args.save_strategy == "epoch"
         assert args.max_length == 512
         assert args.report_to == []
+        assert args.lr_scheduler_type == "cosine"
+        assert args.warmup_ratio == 0.03
+        assert args.tf32 is True
+        assert args.packing is False
+
+    def test_unsloth_skips_gradient_checkpointing_kwarg(
+        self,
+        mock_settings: Settings,
+    ) -> None:
+        mock_settings.use_unsloth = True  # type: ignore[misc]
+        args = build_training_args(mock_settings)
+
+        assert args.gradient_checkpointing_kwargs is None
+
+    def test_packing_enabled(self, mock_settings: Settings) -> None:
+        mock_settings.use_packing = True  # type: ignore[misc]
+        args = build_training_args(mock_settings)
+
+        assert args.packing is True
+
+    def test_linear_scheduler_override(self, mock_settings: Settings) -> None:
+        mock_settings.lr_scheduler_type = "linear"  # type: ignore[misc]
+        args = build_training_args(mock_settings)
+
+        assert args.lr_scheduler_type == "linear"
 
 
 class TestSaveAdapter:
