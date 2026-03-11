@@ -81,6 +81,19 @@ def main() -> None:
     )
     train_parser.add_argument("--max-seq-length", dest="max_seq_length", type=int)
     train_parser.add_argument("--use-4bit", dest="use_4bit", type=bool)
+    train_parser.add_argument("--use-unsloth", dest="use_unsloth", action="store_true")
+    train_parser.add_argument(
+        "--use-flash-attention",
+        dest="use_flash_attention",
+        action="store_true",
+    )
+    train_parser.add_argument("--use-rslora", dest="use_rslora", action="store_true")
+    train_parser.add_argument("--use-dora", dest="use_dora", action="store_true")
+    train_parser.add_argument("--use-packing", dest="use_packing", action="store_true")
+    train_parser.add_argument("--lr-scheduler-type", dest="lr_scheduler_type", type=str)
+    train_parser.add_argument("--target-modules", dest="target_modules", type=str)
+    train_parser.add_argument("--tf32", dest="tf32", type=bool)
+    train_parser.add_argument("--warmup-ratio", dest="warmup_ratio", type=float)
     train_parser.add_argument("--output-dir", dest="output_dir", type=Path)
 
     # merge subcommand

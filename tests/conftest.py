@@ -1,9 +1,14 @@
-from pathlib import Path
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
 import pytest
 
 from ftml.settings import Settings
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 @pytest.fixture
@@ -21,6 +26,15 @@ def mock_settings(tmp_path: Path) -> Settings:
         gradient_accumulation_steps=1,
         max_seq_length=512,
         use_4bit=True,
+        use_unsloth=False,
+        use_flash_attention=False,
+        use_rslora=False,
+        use_dora=False,
+        use_packing=False,
+        lr_scheduler_type="cosine",
+        target_modules="all-linear",
+        tf32=True,
+        warmup_ratio=0.03,
         output_dir=tmp_path / "outputs",
     )
 
