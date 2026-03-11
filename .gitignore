@@ -208,6 +208,7 @@ __marimo__/
 
 # Model outputs / checkpoints
 outputs/
+offload/
 checkpoints/
 *.safetensors
 *.bin

@@ -22,7 +22,7 @@ class TestSettings:
         assert s.max_seq_length == 2048
         assert s.use_4bit is True
 
-    def test_env_overrides(self, monkeypatch: "pytest.MonkeyPatch") -> None:
+    def test_env_overrides(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("MODEL_NAME", "custom/model")
         monkeypatch.setenv("LORA_R", "32")
         monkeypatch.setenv("USE_4BIT", "false")

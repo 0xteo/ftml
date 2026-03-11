@@ -1,0 +1,70 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ftml"
+version = "0.1.0"
+description = "Bulgarian LLM fine-tuning pipeline using LoRA/QLoRA"
+requires-python = ">=3.14"
+dependencies = [
+    "torch>=2.7.0",
+    "transformers>=4.52.0",
+    "peft>=0.15.0",
+    "trl>=0.18.0",
+    "datasets>=3.5.0",
+    "bitsandbytes>=0.46.0",
+    "accelerate>=1.5.0",
+    "kernels>=0.10.2",
+    "pydantic>=2.11.0",
+    "pydantic-settings>=2.9.0",
+]
+
+[project.scripts]
+ftml = "ftml.__main__:main"
+
+[dependency-groups]
+dev = ["basedpyright>=1.29.0", "ruff>=0.11.0", "pre-commit>=4.2.0"]
+test = ["pytest>=8.4.0", "pytest-mock>=3.14.0"]
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "UP", "B", "C4", "SIM", "RET", "PTH", "RUF", "TCH"]
+ignore = ["E501", "ISC001"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["RUF012"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.basedpyright]
+typeCheckingMode = "recommended"
+pythonVersion = "3.14"
+reportUnknownParameterType = "information"
+reportUnknownVariableType = "information"
+reportUnknownMemberType = false
+strictDictionaryInference = false
+reportAny = false
+reportExplicitAny = false
+reportUnusedCallResult = false
+reportUnknownArgumentType = false
+reportImplicitOverride = "information"
+reportUnannotatedClassAttribute = false
+reportMissingTypeArgument = false
+reportMissingTypeStubs = false
+reportCallInDefaultInitializer = false
+reportImportCycles = "information"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "slow: marks tests as slow",
+    "gpu: marks tests requiring GPU",
+]
