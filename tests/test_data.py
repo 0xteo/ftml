@@ -40,21 +40,7 @@ class TestLoadDatasetFromHf:
 
 
 class TestFormatForSft:
-    def test_conversations_format(self, mock_tokenizer: MagicMock) -> None:
-        ds = Dataset.from_dict(
-            {
-                "conversations": [
-                    [{"role": "user", "content": "Hi"}, {"role": "assistant", "content": "Hello"}],
-                ],
-            },
-        )
-
-        result = format_for_sft(ds, mock_tokenizer)
-
-        assert "text" in result.column_names
-        mock_tokenizer.apply_chat_template.assert_called_once()
-
-    def test_messages_format(self, mock_tokenizer: MagicMock) -> None:
+    def test_messages_format_passthrough(self, mock_tokenizer: MagicMock) -> None:
         ds = Dataset.from_dict(
             {
                 "messages": [
@@ -65,7 +51,23 @@ class TestFormatForSft:
 
         result = format_for_sft(ds, mock_tokenizer)
 
-        assert "text" in result.column_names
+        assert "messages" in result.column_names
+        mock_tokenizer.apply_chat_template.assert_not_called()
+
+    def test_conversations_renamed_to_messages(self, mock_tokenizer: MagicMock) -> None:
+        ds = Dataset.from_dict(
+            {
+                "conversations": [
+                    [{"role": "user", "content": "Hi"}, {"role": "assistant", "content": "Hello"}],
+                ],
+            },
+        )
+
+        result = format_for_sft(ds, mock_tokenizer)
+
+        assert "messages" in result.column_names
+        assert "conversations" not in result.column_names
+        mock_tokenizer.apply_chat_template.assert_not_called()
 
     def test_text_format_passthrough(self, mock_tokenizer: MagicMock) -> None:
         ds = Dataset.from_dict({"text": ["Hello world"]})

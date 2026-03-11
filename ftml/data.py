@@ -1,8 +1,12 @@
-from typing import Any
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 
 from datasets import Dataset, DatasetDict
 from datasets import load_dataset as _load_dataset
-from transformers import PreTrainedTokenizerBase
+
+if TYPE_CHECKING:
+    from transformers import PreTrainedTokenizerBase
 
 
 def load_dataset_from_hf(
@@ -31,18 +35,11 @@ def format_for_sft(
 ) -> Dataset:
     columns = dataset.column_names
 
-    if "conversations" in columns or "messages" in columns:
-        msg_col = "conversations" if "conversations" in columns else "messages"
+    if "messages" in columns:
+        return dataset
 
-        def apply_template(example: dict) -> dict:
-            text = tokenizer.apply_chat_template(
-                example[msg_col],
-                tokenize=False,
-                add_generation_prompt=False,
-            )
-            return {"text": text}
-
-        return dataset.map(apply_template, remove_columns=columns)
+    if "conversations" in columns:
+        return dataset.rename_column("conversations", "messages")
 
     if "text" in columns:
         return dataset
